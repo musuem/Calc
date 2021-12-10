@@ -10,173 +10,155 @@ wn = trtl.Screen()
 global line_list
 line_list = []
 
-wn.bgpic('Group 1 (1).png')
+wn.bgpic('calc.png')
 wn.setup(570, 696)
+
 cover.ht()
+
 t.penup()
 t.ht()
 t.pencolor('white')
-t.goto(-250, 150)
+t.goto(195, 150)
 t.pendown()
 
-#Used to cover 0 when button pressed.
-#wn.addshape('cover.gif')
-#cover.shape('cover.gif')
+#Used to cover 0
 cover.speed(0)
 cover.penup()
-cover.goto(225, 225)
+cover.goto(225, 280)
 cover.pendown() 
-#cover.stamp()
+cover.stamp()
+
+
 
 ##Operator Function
-
-def addition(request):
-    t.clear()
-    for i in range(len(request)):
-        request[i] = str(request[i])
-        
-    request = ''.join(request)
-    request = request.split('+')
-    length = len(request)
-    length = length-1
-    int2 = ''.join(request[length]).split('=')[0]
-    total = 0
-    for i in range(0,length,1): 
-        total =int(total) + int(request[i])
-    print('table is')
-    print(total)
-    print(int2)
-    total = total + int(int2)
-    t.pu()
-    t.goto(140,150)
-    t.pendown()
-    if int(len(list(str(total)))) >= 3:
-        turtlereset = 140
-        for i in range(len(list(str(total)))):
+def write(list):
+    mult = 0
+    for char in reversed(list):
+        for wt in reversed(char):
             t.pu()
-            t.goto(turtlereset,150)
-            t.pendown()
-            turtlereset -= 50
-    t.write(str(total), font=("Arial", 74, "bold"))
+            t.goto(195 - 55*mult, 150)
+            t.pd() 
+            t.write(wt, font=("Arial", 74, "bold"))
+            mult += 1
 
+def screen_check(mult):
+  if 195 - 55*mult < -300:
+    return True
+  else:
+    return False
+#With thise code we can evalute a factorial
+def calc_factorial(char):
+  while char > 0:
+    return char * calc_factorial(char - 1)
+  return 1
+#This code indentifies which trigonometry operator is being used and then manipulates the string to grab the sin/cos/tan part, and it will then assign it to its corresponding trigonometry type and solve
+def trigonomtry(equation, arithmetic, char):
+    trig = eval(str(equation.split(char)[1]))
+    trigtoinsert = arithmetic.index(char)
+    arithmetic.pop(int(trigtoinsert))
+    if char == 'sin':
+        trig = str(round(math.sin(float(trig)),5))
+    elif char == 'cos':
+        trig = str(round(math.cos(float(trig)),5))
+    elif char == 'tan':
+        trig = str(round(math.tan(float(trig)),5))
+    arithmetic.insert(trigtoinsert,str(trig))
+    return equation, arithmetic
 
-def subtraction(request):
-    t.clear()
-    for i in range(len(request)):
-        request[i] = str(request[i])    
-    request = ''.join(request)
-    request = request.split('-')
-    length = len(request)
-    length = length-1
-    int2 = ''.join(request[length]).split('=')[0]
-    total = int(request[0]) - int(int2[0])
+#Works as an On and Off Switch. If equal sign is present, pop it out so error does not occur.
+def calculate(arithmetic, bool):
 
+    if bool == True:
+        arithmetic.pop()
 
-
-    t.pu()
-    t.goto(140,150)
-    t.pendown()
-    if int(len(list(str(total)))) >= 3:
-        turtlereset = 140
-        for i in range(len(list(str(total)))):
-            t.pu()
-            t.goto(turtlereset,150)
-            t.pendown()
-            turtlereset -= 50
+    #Used for factorial. String manipulation.
+    #With this code, we initally split the ! into 2 parts, and then reverse index the 1st portion of the split to determine the factorial coefficient 
+    if '!' in arithmetic:
+        stringclone = ''.join(arithmetic)
+        for chars in arithmetic:
+            if chars == '!':
+                tempolist = ''.join(arithmetic).split('!')
+                tempolist = list(tempolist[0])
+                for char in reversed(tempolist):
+                    try:    
+                        int(char)
+                    except:
+                        tempolist = ''.join(tempolist).split(char)
+                        break
     
-    t.write(str(total), font=("Arial", 74, "bold"))
-def multiplication(request):
-    t.clear()
-    for i in range(len(request)):
-        request[i] = str(request[i])    
-    request = ''.join(request)
-    request = request.split('x')
-    int2 = ''.join(request[1]).split('=')
-    total = int(request[0]) * int(int2[0])
+        sum =  str(calc_factorial(int(tempolist[(len(tempolist)-1)])))
+        stringclone = stringclone.replace(tempolist[(len(tempolist)-1)] + '!',sum )
+        answer = eval(stringclone)
+        print(answer)
+        arithmetic = stringclone
+    #Our final portion of the evaluation block allows us to finalize and convert any raw equations to fit the requirements of an eval function
+    equation = ''.join(arithmetic)
+    print(arithmetic)
+    trig = ['sin', 'cos', 'tan']
+    for char in trig:
+        print(char)
+        if char in arithmetic:
+            print(char)
+            equation, arithmetic = trigonomtry(equation, arithmetic, char)
+            print(equation, arithmetic)
+    print(equation, arithmetic)
+    equation = ''.join(arithmetic)
 
-
-
-
-
-
-
-    t.pu()
-    t.goto(140,150)
-    t.pendown()
-    if int(len(list(str(total)))) >= 3:
-        turtlereset = 140
-        for i in range(len(list(str(total)))):
-            t.pu()
-            t.goto(turtlereset,150)
-            t.pendown()
-            turtlereset -= 50    
-    t.write(str(total), font=("Arial", 74, "bold"))
-
-
-def division(request):
-    t.clear()
-    for i in range(len(request)):
-        request[i] = str(request[i])    
-    request = ''.join(request)
-    request = request.split('/')
-    int2 = ''.join(request[1]).split('=')
-    total =round(int(request[0]) / int(int2[0]),2)
-
-
-
-
-    t.pu()
-    t.goto(140,150)
-    t.pendown()
-    if int(len(list(str(total)))) >= 3:
-        turtlereset = 140
-        for i in range(len(list(str(total)))):
-            t.pu()
-            t.goto(turtlereset,150)
-            t.pendown()
-            turtlereset -= 50
-    t.write(str(total), font=("Arial", 74, "bold"))
-
-
-def write(button):
-    t.write(button, font=("Arial", 74, "bold"))
-    t.penup()
-    t.fd(55)
-    t.pendown() 
-
-def find_operation(line_list):
-    print(line_list)
-    for char in line_list:
-        if char == '+':
-            addition(line_list)
-        elif char == '-':
-            subtraction(line_list)
-        elif char == 'x':
-            multiplication(line_list)
-        elif char == '/':
-            division(line_list)
+    try:
+        print(equation)
+        equation = str(eval(equation))
+        t.clear()
+        write(equation)
+    except Exception:
+        t.clear()
+        t.pu()
+        t.goto(50, 150)
+        t.pendown()
+        t.write('Error', font=("Arial", 74, "bold"))
+#This graphing function will switch the calculator mode to graphing and conduct all graphing operations
+def Graphing(x,y):
+    if -290 < y< -240:
+        if -290 < x<-100:
+            wn.bgpic('calc.png')
+            wn.onclick(button_pressed)
+    if -290 + 115*4 < x < -290 + 115*5:
+        if 46 - 55*6 > y > 46 - 55*7:
+            #graphing stuff
+            'a'
 
     
+#The code below is mimicking the layout of a rectangle divided by x lines on heigh and width. It then multiplys y by the row level and x but the colum level. 
+# After we determine and classify the button click and its position, we assign the button click to a value which corresponds to its click
 def button_pressed(x, y):
-    global button
+    global button, line_list
+    printed = True
+    NotEval = True
+    if 50 < y< 100:
+        if -270<x<-130:
+            button = 'SwitchTrig'
+            NotEval = False
+            printed = False
+            wn.bgpic('graphingcalc.png')
+            wn.onclick(Graphing)
     if 46 - 55*0 > y > 46 - 55*1:
         if -290 + 115*0 < x < -290 + 115*1:
             button = '1/x'
-            
         elif -290 + 115*1 < x < -290 + 115*2:
             button = 'Natural Logarithim'
         elif -290 + 115*2 < x < -290 + 115*3:
             button = 'log'
         elif -290 + 115*3 < x < -290 + 115*4:
             button = 'Clear'
+            printed = False
         elif -290 + 115*4 < x < -290 + 115*5:
             button = 'Delete'
+            printed = False
 
     if 46 - 55*1 > y > 46 - 55*2:
         if -290 + 115*0 < x < -290 + 115*1:
             button = 'sin'
         elif -290 + 115*1 < x < -290 + 115*2:
-            button = 'cosin'
+            button = 'cos'
         elif -290 + 115*2 < x < -290 + 115*3:
             button = 'tan'
         elif -290 + 115*3 < x < -290 + 115*4:
@@ -206,11 +188,11 @@ def button_pressed(x, y):
         elif -290 + 115*3 < x < -290 + 115*4:
             button = 9
         elif -290 + 115*4 < x < -290 + 115*5:
-            button = 'x' #Multiplication
+            button = '*' #Multiplication
 
     if 46 - 55*4 > y > 46 - 55*5:
         if -290 + 115*0 < x < -290 + 115*1:
-            button = 'x^2' #Ten to the power of x
+            button = '**2' #Ten to the power of x
         elif -290 + 115*1 < x < -290 + 115*2:
             button = 4
         elif -290 + 115*2 < x < -290 + 115*3:
@@ -234,7 +216,7 @@ def button_pressed(x, y):
   
     if 46 - 55*6 > y > 46 - 55*7:
         if -290 + 115*0 < x < -290 + 115*1:
-            button = 'Natural Logarithm'
+            button = '**'
         elif -290 + 115*1 < x < -290 + 115*2:
             button = '-' #Negative
         elif -290 + 115*2 < x < -290 + 115*3:
@@ -243,18 +225,55 @@ def button_pressed(x, y):
             button = '.' #Decimal
         elif -290 + 115*4 < x < -290 + 115*5:
             button = '=' #Equal
-            
-    try:
-        line_list.append(button)
-        
-    except NameError:
-        print('')
+    #We use a check/if statement to check for button clicks that should not be written like clear or delete
+    if printed != False:
+        line_list.append(str(button))
+    t.clear()
 
-    write(button)
-    for char in line_list:
-        if char == '=':
-            find_operation(line_list)
+    #writes characters clicked on screen.
+
+    write(line_list)
+
+      #if characters go off screen:
+    #With thise code, we can check and verify that the inputted equation does not go off of the screen, and if it does, the equation will be forced to be evaulted
+    screencheck = screen_check(len(line_list))
+    if screencheck == True:
+        t.clear()
+        equation = ''.join(line_list)
+        line_list = []
+        try:
+          equation = str(eval(equation))
+        except SyntaxError:
+          t.pu()
+          t.goto(50, 150)
+          t.pendown()
+          t.write('Error', font=("Arial", 74, "bold"))
+          print(equation)
+        write(line_list)
 
 
-wn.onscreenclick(button_pressed)
+    #Special signs.
+
+    ##With the following code we can filter out functions that we do not want evaluted as python's builtin eval function only accepts strings
+    if NotEval == True:
+        if button == '=':
+            calculate(line_list, True)
+            line_list = []
+    #This button is used to clear the table and screen
+    if button == 'Clear':
+        t.clear()
+        line_list = []
+    #We can delete the previous input with this button, and it works by popping the most recently added index, clearing the screen, and rewriting the new list
+    if button == 'Delete':
+        t.clear()
+        print(line_list)
+        line_list.pop()
+        print(line_list)
+        write(line_list)
+
+    
+
+# Fix 1280+
+
+wn.onclick(button_pressed)
 wn.mainloop()
